@@ -1,0 +1,83 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services\Notifications;
+
+use App\Enums\NotificationChannel;
+use App\Enums\NotificationStatus;
+use App\Jobs\SendNotification;
+use App\Models\Notification;
+use Illuminate\Support\Facades\Log;
+use Psr\Log\LoggerInterface;
+use Throwable;
+
+/**
+ * Service for creating and managing notifications
+ */
+readonly class NotificationService
+{
+    /**
+     * @var LoggerInterface
+     */
+    protected LoggerInterface $logger;
+
+    public function __construct(
+        private ChannelManager $channelManager
+    ) {
+        $this->logger = Log::channel('notifier');
+    }
+
+    /**
+     * Create and send a notification
+     *
+     * @param int $userId The user ID
+     * @param string $message The notification message
+     * @param NotificationChannel $channel The notification channel
+     *
+     * @return Notification The created notification with final status
+     */
+    public function create(int $userId, string $message, NotificationChannel $channel): Notification
+    {
+        $this->logger->info(
+            'Creating notification',
+            [
+                'user_id' => $userId,
+                'message' => $message,
+                'channel' => $channel,
+            ]
+        );
+
+        $notification = Notification::create([
+            'user_id' => $userId,
+            'message' => $message,
+            'channel' => $channel->value,
+            'status' => NotificationStatus::PENDING,
+        ]);
+
+        SendNotification::dispatch($notification->id);
+
+        $this->logger->info(
+            'Notification created successfully',
+            [
+                'id' => $notification->id,
+                'user_id' => $userId,
+                'channel' => $channel->value,
+            ]
+        );
+
+        return $notification->fresh();
+    }
+
+    /**
+     * Send a notification
+     *
+     * @param Notification $notification The notification to send
+     *
+     * @throws Throwable
+     */
+    public function send(Notification $notification): void
+    {
+        $this->channelManager->send($notification);
+    }
+}
