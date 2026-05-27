@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    container_name: notify_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - notify
+    depends_on:
+      - mysql
+
+  nginx:
+    image: nginx:alpine
+    container_name: notify_nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - notify
+    depends_on:
+      - app
+
+  mysql:
+    image: mysql:8.0
+    container_name: notify_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: notify_db
+      MYSQL_USER: notify
+      MYSQL_PASSWORD: notify_password
+    ports:
+      - "3336:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - notify
+
+networks:
+  notify:
+    driver: bridge
+
+volumes:
+  mysql_data:
