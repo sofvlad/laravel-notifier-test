@@ -1,0 +1,57 @@
+parameters:
+    level: 5
+    paths:
+        - app/
+        - config/
+        - database/
+        - routes/
+        #- tests/
+
+    excludePaths:
+        - database/migrations/
+        - tests/Feature/
+        - routes/web.php
+        - routes/api.php
+
+    # Подключаем автозагрузку Laravel, чтобы классы находились
+    bootstrapFiles:
+        - vendor/autoload.php
+        - bootstrap/app.php
+
+    # Игнорируем ошибки, которые неизбежны без phpstan-laravel
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        # Фасады
+        - '#Call to an undefined method Illuminate\\Support\\Facades\\\w+::\w+\(\)#'
+        - '#Class Illuminate\\Support\\Facades\\\w+ not found#'
+
+        # Помощники Laravel
+        - '#Function (view|redirect|response|abort|auth|bcrypt|config|cache|collect|env|event|logger|old|session|trans|validator) not found#'
+
+        # Eloquent модели
+        - '#Call to an undefined (static )?method .*::(create|forceCreate|update|firstOrCreate|find|where)\(\)#'
+        - '#Access to an undefined property .*::\$.+#'
+        - '#Property .*::\$table .* not found#'
+
+        # Контроллеры и Request
+        - '#Method .*::validate\(\) .* not found#'
+        - '#Call to an undefined method Illuminate\\Http\\Request::(user|validate|input|only|except|has)\(\)#'
+
+        # Коллекции
+        - '#Call to an undefined method Illuminate\\Support\\Collection::\w+\(\)#'
+
+        # dd, dump
+        - '#Function (dd|dump) not found#'
+
+        # Schema Builder в миграциях
+        - '#Call to undefined method Illuminate\\Database\\Schema\\Builder::\w+\(\)#'
+
+        # Контейнер
+        - '#Parameter \#1 \$concrete of class Illuminate\\Container\\Container::make\(\) expects string, .* given#'
+
+        # Файловая система
+        - '#Call to an undefined method Illuminate\\Contracts\\Filesystem\\Filesystem::download\(\)#'
+
+    # Сканируем исходники фреймворка для лучшего понимания классов
+    scanDirectories:
+        - vendor/laravel/framework/src

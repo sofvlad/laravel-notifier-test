@@ -13,9 +13,6 @@ use Illuminate\Support\Facades\Auth;
  */
 class NotificationsReportFactory extends Factory
 {
-    /**
-     * @var string
-     */
     protected $model = NotificationsReport::class;
 
     /**

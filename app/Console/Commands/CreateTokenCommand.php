@@ -28,7 +28,7 @@ class CreateTokenCommand extends Command
     {
         $email = $this->argument('email') ?? $this->ask('User email');
 
-        /** @var User|null $admin */
+        /** @var User|null $user */
         $user = User::where('email', $email)->first();
         if ($user === null) {
             $this->error("User with email [{$email}] not found.");

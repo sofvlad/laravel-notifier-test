@@ -74,9 +74,10 @@ class NotificationsReportServiceTest extends TestCase
         $this->assertNotNull($report->completed_at);
         $this->assertNotNull($filePath);
 
-        Storage::disk('local')->assertExists($filePath);
+        $fileSystem = Storage::disk('local');
+        $fileSystem->assertExists($filePath);
 
-        $content = json_decode(Storage::disk('local')->get($filePath), true);
+        $content = json_decode($fileSystem->get($filePath), true);
 
         $this->assertEquals($report->id, $content['report_id']);
         $this->assertEquals(3, $content['summary']['total_notifications']);

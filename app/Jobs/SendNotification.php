@@ -38,7 +38,7 @@ class SendNotification implements ShouldQueue
 
         $notification = Notification::find($this->notificationId);
         if (!$notification) {
-            $logger->error("Notification not found", ['id' => $notification->id]);
+            $logger->error("Notification not found", ['id' => $this->notificationId]);
 
             return;
         }

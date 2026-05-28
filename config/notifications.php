@@ -8,8 +8,6 @@ use App\Services\Notifications\Channels\TelegramChannel;
  *
  * Add new channels here to extend the notification system.
  * Each channel must implement ChannelInterface.
- *
- * @var array<string, class-string>
  */
 return [
     'channels' => [

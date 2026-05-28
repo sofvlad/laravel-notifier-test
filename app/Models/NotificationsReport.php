@@ -26,7 +26,7 @@ class NotificationsReport extends Model
     ];
 
     /**
-     * @var array<string, string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'uuid',

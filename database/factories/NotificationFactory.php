@@ -13,9 +13,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class NotificationFactory extends Factory
 {
-    /**
-     * @var string
-     */
     protected $model = Notification::class;
 
     /**
