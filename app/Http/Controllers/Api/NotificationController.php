@@ -11,7 +11,6 @@ use App\Enums\NotificationChannel;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Notification\ListNotificationsRequest;
 use App\Http\Requests\Api\Notification\StoreNotificationRequest;
-use App\Models\Notification;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 
@@ -22,11 +21,6 @@ class NotificationController extends Controller
 {
     /**
      * List notifications for a user with optional filtering
-     *
-     * @param ListNotificationsRequest $request
-     * @param ListNotificationsAction $listAction
-     *
-     * @return JsonResponse
      */
     public function index(
         ListNotificationsRequest $request,
@@ -43,11 +37,6 @@ class NotificationController extends Controller
 
     /**
      * Get a specific notification by UUID
-     *
-     * @param string $uuid
-     * @param GetNotificationAction $getNotificationAction
-     *
-     * @return JsonResponse
      */
     public function show(string $uuid, GetNotificationAction $getNotificationAction): JsonResponse
     {
@@ -62,11 +51,6 @@ class NotificationController extends Controller
 
     /**
      * Create a new notification
-     *
-     * @param StoreNotificationRequest $request
-     * @param StoreNotificationAction $storeAction
-     *
-     * @return JsonResponse
      */
     public function store(
         StoreNotificationRequest $request,

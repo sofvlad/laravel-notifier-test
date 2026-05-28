@@ -18,14 +18,15 @@ class NotificationsReportServiceTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected NotificationsReportService $service;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
-        $this->service = new NotificationsReportService();
+        $this->user    = User::factory()->create();
+        $this->service = new NotificationsReportService;
         $this->actingAs($this->user);
     }
 
@@ -41,14 +42,14 @@ class NotificationsReportServiceTest extends TestCase
             'user_id' => $this->user->id,
             'message' => 'Test message 1',
             'channel' => NotificationChannel::EMAIL->value,
-            'status' => NotificationStatus::SENT->value,
+            'status'  => NotificationStatus::SENT->value,
         ]);
 
         Notification::create([
-            'user_id' => $this->user->id,
-            'message' => 'Test message 2',
-            'channel' => NotificationChannel::EMAIL->value,
-            'status' => NotificationStatus::FAILED->value,
+            'user_id'       => $this->user->id,
+            'message'       => 'Test message 2',
+            'channel'       => NotificationChannel::EMAIL->value,
+            'status'        => NotificationStatus::FAILED->value,
             'error_message' => 'SMTP error',
         ]);
 
@@ -56,14 +57,14 @@ class NotificationsReportServiceTest extends TestCase
             'user_id' => $this->user->id,
             'message' => 'Test message 3',
             'channel' => NotificationChannel::TELEGRAM->value,
-            'status' => NotificationStatus::SENT->value,
+            'status'  => NotificationStatus::SENT->value,
         ]);
 
         $report = NotificationsReport::create([
-            'user_id' => $this->user->id,
+            'user_id'      => $this->user->id,
             'period_start' => now()->subDays(10),
-            'period_end' => now(),
-            'status' => ReportStatus::PENDING->value,
+            'period_end'   => now(),
+            'status'       => ReportStatus::PENDING->value,
         ]);
 
         $filePath = $this->service->generate($report);
@@ -90,35 +91,35 @@ class NotificationsReportServiceTest extends TestCase
             'user_id' => $this->user->id,
             'message' => 'Sent 1',
             'channel' => NotificationChannel::EMAIL->value,
-            'status' => NotificationStatus::SENT->value,
+            'status'  => NotificationStatus::SENT->value,
         ]);
 
         Notification::create([
             'user_id' => $this->user->id,
             'message' => 'Failed 1',
             'channel' => NotificationChannel::EMAIL->value,
-            'status' => NotificationStatus::FAILED->value,
+            'status'  => NotificationStatus::FAILED->value,
         ]);
 
         Notification::create([
             'user_id' => $this->user->id,
             'message' => 'Failed 2',
             'channel' => NotificationChannel::EMAIL->value,
-            'status' => NotificationStatus::FAILED->value,
+            'status'  => NotificationStatus::FAILED->value,
         ]);
 
         Notification::create([
             'user_id' => $this->user->id,
             'message' => 'Sent 2',
             'channel' => NotificationChannel::TELEGRAM->value,
-            'status' => NotificationStatus::SENT->value,
+            'status'  => NotificationStatus::SENT->value,
         ]);
 
         $report = NotificationsReport::create([
-            'user_id' => $this->user->id,
+            'user_id'      => $this->user->id,
             'period_start' => now()->subDays(10),
-            'period_end' => now(),
-            'status' => ReportStatus::PENDING->value,
+            'period_end'   => now(),
+            'status'       => ReportStatus::PENDING->value,
         ]);
 
         $this->service->generate($report);
@@ -126,7 +127,7 @@ class NotificationsReportServiceTest extends TestCase
 
         $content = json_decode(Storage::disk('local')->get($report->file_path), true);
 
-        $emailChannel = collect($content['by_channel'])->where('channel', 'email')->first();
+        $emailChannel    = collect($content['by_channel'])->where('channel', 'email')->first();
         $telegramChannel = collect($content['by_channel'])->where('channel', 'telegram')->first();
 
         $this->assertEquals(3, $emailChannel['total']);
@@ -138,26 +139,26 @@ class NotificationsReportServiceTest extends TestCase
     public function test_it_only_includes_notifications_from_period(): void
     {
         Notification::forceCreate([
-            'user_id' => $this->user->id,
-            'message' => 'Old notification',
-            'channel' => NotificationChannel::EMAIL->value,
-            'status' => NotificationStatus::SENT->value,
+            'user_id'    => $this->user->id,
+            'message'    => 'Old notification',
+            'channel'    => NotificationChannel::EMAIL->value,
+            'status'     => NotificationStatus::SENT->value,
             'created_at' => now()->subDays(20),
         ]);
 
         Notification::forceCreate([
-            'user_id' => $this->user->id,
-            'message' => 'New notification',
-            'channel' => NotificationChannel::EMAIL->value,
-            'status' => NotificationStatus::SENT->value,
+            'user_id'    => $this->user->id,
+            'message'    => 'New notification',
+            'channel'    => NotificationChannel::EMAIL->value,
+            'status'     => NotificationStatus::SENT->value,
             'created_at' => now()->subDays(5),
         ]);
 
         $report = NotificationsReport::create([
-            'user_id' => $this->user->id,
+            'user_id'      => $this->user->id,
             'period_start' => now()->subDays(10),
-            'period_end' => now(),
-            'status' => ReportStatus::PENDING->value,
+            'period_end'   => now(),
+            'status'       => ReportStatus::PENDING->value,
         ]);
 
         $this->service->generate($report);
@@ -173,14 +174,14 @@ class NotificationsReportServiceTest extends TestCase
             'user_id' => $this->user->id,
             'message' => 'Test',
             'channel' => NotificationChannel::EMAIL->value,
-            'status' => NotificationStatus::SENT->value,
+            'status'  => NotificationStatus::SENT->value,
         ]);
 
         $report = NotificationsReport::create([
-            'user_id' => $this->user->id,
+            'user_id'      => $this->user->id,
             'period_start' => now()->subDays(10),
-            'period_end' => now(),
-            'status' => ReportStatus::PENDING->value,
+            'period_end'   => now(),
+            'status'       => ReportStatus::PENDING->value,
         ]);
 
         $this->service->generate($report);
@@ -205,14 +206,14 @@ class NotificationsReportServiceTest extends TestCase
             'user_id' => $this->user->id,
             'message' => 'Test',
             'channel' => NotificationChannel::EMAIL->value,
-            'status' => NotificationStatus::SENT->value,
+            'status'  => NotificationStatus::SENT->value,
         ]);
 
         $report = NotificationsReport::create([
-            'user_id' => $this->user->id,
+            'user_id'      => $this->user->id,
             'period_start' => now()->subDays(10),
-            'period_end' => now(),
-            'status' => ReportStatus::PENDING->value,
+            'period_end'   => now(),
+            'status'       => ReportStatus::PENDING->value,
         ]);
 
         $this->service->generate($report);

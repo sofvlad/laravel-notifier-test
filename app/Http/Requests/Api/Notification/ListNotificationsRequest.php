@@ -22,7 +22,7 @@ class ListNotificationsRequest extends FormRequest
 
         return [
             'user_id' => ['required', 'integer', 'exists:users,id'],
-            'status' => ['nullable', 'string', Rule::enum(NotificationStatus::class)],
+            'status'  => ['nullable', 'string', Rule::enum(NotificationStatus::class)],
             'channel' => ['nullable', 'string', Rule::in($channels)],
         ];
     }
@@ -31,10 +31,10 @@ class ListNotificationsRequest extends FormRequest
     {
         return [
             'user_id.required' => 'User ID is required',
-            'user_id.integer' => 'User ID must be an integer',
-            'user_id.exists' => 'The selected user does not exist',
-            'status.enum' => 'Invalid status value',
-            'channel.in' => 'Invalid channel value',
+            'user_id.integer'  => 'User ID must be an integer',
+            'user_id.exists'   => 'The selected user does not exist',
+            'status.enum'      => 'Invalid status value',
+            'channel.in'       => 'Invalid channel value',
         ];
     }
 
@@ -42,7 +42,7 @@ class ListNotificationsRequest extends FormRequest
     {
         return [
             'user_id' => 'user шв',
-            'status' => 'status',
+            'status'  => 'status',
             'channel' => 'channel',
         ];
     }

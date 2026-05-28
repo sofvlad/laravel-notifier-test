@@ -30,14 +30,14 @@ class StoreNotificationRequest extends FormRequest
     {
         return [
             'user_id.required' => 'User ID is required',
-            'user_id.integer' => 'User ID must be an integer',
-            'user_id.exists' => 'The selected user does not exist',
+            'user_id.integer'  => 'User ID must be an integer',
+            'user_id.exists'   => 'The selected user does not exist',
             'message.required' => 'Message is required',
-            'message.string' => 'Message must be a string',
-            'message.max' => 'Message may not be greater than 500 characters',
+            'message.string'   => 'Message must be a string',
+            'message.max'      => 'Message may not be greater than 500 characters',
             'channel.required' => 'Channel is required',
-            'channel.string' => 'Channel must be a string',
-            'channel.in' => 'Invalid channel value',
+            'channel.string'   => 'Channel must be a string',
+            'channel.in'       => 'Invalid channel value',
         ];
     }
 

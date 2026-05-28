@@ -14,12 +14,6 @@ class StoreNotificationAction
         private readonly NotificationService $notificationService,
     ) {}
 
-    /**
-     * @param int $userId
-     * @param string $message
-     * @param NotificationChannel $channel
-     * @return Notification
-     */
     public function execute(
         int $userId,
         string $message,

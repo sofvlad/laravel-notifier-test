@@ -37,8 +37,8 @@ class SendNotification implements ShouldQueue
         $logger = Log::channel('notifier');
 
         $notification = Notification::find($this->notificationId);
-        if (!$notification) {
-            $logger->error("Notification not found", ['id' => $this->notificationId]);
+        if (! $notification) {
+            $logger->error('Notification not found', ['id' => $this->notificationId]);
 
             return;
         }
@@ -47,22 +47,22 @@ class SendNotification implements ShouldQueue
             $notificationService->send($notification);
 
             $notification->update([
-                'status' => NotificationStatus::SENT,
+                'status'  => NotificationStatus::SENT,
                 'sent_at' => now(),
             ]);
         } catch (Throwable $e) {
             $notification->update([
-                'status' => NotificationStatus::FAILED,
+                'status'        => NotificationStatus::FAILED,
                 'error_message' => $e->getMessage(),
             ]);
 
             $logger->error(
                 'Failed to send notification',
                 [
-                    'id' => $notification->id,
+                    'id'      => $notification->id,
                     'user_id' => $notification->userId,
                     'channel' => $notification->channel,
-                    'error' => $e->getMessage(),
+                    'error'   => $e->getMessage(),
                 ]
             );
 
@@ -72,7 +72,7 @@ class SendNotification implements ShouldQueue
         $logger->info(
             'Notification sent successfully',
             [
-                'id' => $notification->id,
+                'id'      => $notification->id,
                 'user_id' => $notification->userId,
                 'channel' => $notification->channel,
             ]

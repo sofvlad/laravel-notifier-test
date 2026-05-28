@@ -27,8 +27,8 @@ class CreateUserCommand extends Command
      */
     public function handle(): int
     {
-        $name = $this->argument('name') ?? $this->ask('User name');
-        $email = $this->argument('email') ?? $this->ask('User email');
+        $name     = $this->argument('name') ?? $this->ask('User name');
+        $email    = $this->argument('email') ?? $this->ask('User email');
         $password = $this->option('password') ?? $this->secret('User password');
 
         $confirmPassword = $this->secret('Confirm password');
@@ -46,8 +46,8 @@ class CreateUserCommand extends Command
         }
 
         User::create([
-            'name' => $name,
-            'email' => $email,
+            'name'     => $name,
+            'email'    => $email,
             'password' => Hash::make($password),
         ]);
 

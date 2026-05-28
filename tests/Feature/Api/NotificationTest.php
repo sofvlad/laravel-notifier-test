@@ -14,13 +14,14 @@ class NotificationTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected string $token;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        $this->user  = User::factory()->create();
         $this->token = $this->user->createToken('test-token')->plainTextToken;
     }
 
@@ -38,14 +39,14 @@ class NotificationTest extends TestCase
                 'user_id' => $this->user->id,
                 'message' => 'Test notification message',
                 'channel' => NotificationChannel::EMAIL->value,
-                'status' => NotificationStatus::SENT->value,
+                'status'  => NotificationStatus::SENT->value,
             ]);
 
         $this->assertDatabaseHas('notifications', [
             'user_id' => $this->user->id,
             'message' => 'Test notification message',
             'channel' => NotificationChannel::EMAIL->value,
-            'status' => NotificationStatus::SENT->value,
+            'status'  => NotificationStatus::SENT->value,
         ]);
     }
 
@@ -80,7 +81,7 @@ class NotificationTest extends TestCase
         $notification = Notification::factory()->create([
             'user_id' => $this->user->id,
             'message' => 'Test message',
-            'status' => NotificationStatus::SENT,
+            'status'  => NotificationStatus::SENT,
             'channel' => NotificationChannel::EMAIL->value,
         ]);
 
@@ -89,7 +90,7 @@ class NotificationTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonFragment([
-                'id' => $notification->id,
+                'id'     => $notification->id,
                 'status' => $notification->status->value,
             ]);
     }
@@ -100,7 +101,7 @@ class NotificationTest extends TestCase
             Notification::factory()->create([
                 'user_id' => $this->user->id,
                 'message' => "Message {$i}",
-                'status' => NotificationStatus::SENT,
+                'status'  => NotificationStatus::SENT,
                 'channel' => NotificationChannel::EMAIL->value,
             ]);
         }
@@ -109,7 +110,7 @@ class NotificationTest extends TestCase
             Notification::factory()->create([
                 'user_id' => $this->user->id,
                 'message' => "Telegram {$i}",
-                'status' => NotificationStatus::SENT,
+                'status'  => NotificationStatus::SENT,
                 'channel' => NotificationChannel::TELEGRAM->value,
             ]);
         }
@@ -117,7 +118,7 @@ class NotificationTest extends TestCase
         Notification::factory()->create([
             'user_id' => User::factory()->create()->id,
             'message' => 'Other user',
-            'status' => NotificationStatus::SENT,
+            'status'  => NotificationStatus::SENT,
             'channel' => NotificationChannel::EMAIL->value,
         ]);
 
@@ -133,14 +134,14 @@ class NotificationTest extends TestCase
         Notification::factory()->create([
             'user_id' => $this->user->id,
             'message' => 'Sent message',
-            'status' => NotificationStatus::SENT,
+            'status'  => NotificationStatus::SENT,
             'channel' => NotificationChannel::EMAIL->value,
         ]);
 
         Notification::factory()->create([
             'user_id' => $this->user->id,
             'message' => 'Failed message',
-            'status' => NotificationStatus::FAILED,
+            'status'  => NotificationStatus::FAILED,
             'channel' => NotificationChannel::EMAIL->value,
         ]);
 
@@ -162,7 +163,7 @@ class NotificationTest extends TestCase
             Notification::factory()->create([
                 'user_id' => $this->user->id,
                 'message' => "Email {$i}",
-                'status' => NotificationStatus::SENT,
+                'status'  => NotificationStatus::SENT,
                 'channel' => NotificationChannel::EMAIL->value,
             ]);
         }
@@ -171,7 +172,7 @@ class NotificationTest extends TestCase
             Notification::factory()->create([
                 'user_id' => $this->user->id,
                 'message' => "Telegram {$i}",
-                'status' => NotificationStatus::SENT,
+                'status'  => NotificationStatus::SENT,
                 'channel' => NotificationChannel::TELEGRAM->value,
             ]);
         }

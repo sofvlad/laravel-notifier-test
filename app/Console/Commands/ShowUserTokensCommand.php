@@ -49,7 +49,7 @@ class ShowUserTokensCommand extends Command
 
         $this->table(
             ['#', 'Name', 'Created', 'Last Used', 'Scopes', 'Revoked'],
-            $tokens->map(fn($token, $index) => [
+            $tokens->map(fn ($token, $index) => [
                 $index + 1,
                 $token->name,
                 $token->created_at->format('Y-m-d H:i:s'),

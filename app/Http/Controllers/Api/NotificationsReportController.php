@@ -11,18 +11,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Notification\Report\GenerateReportRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class NotificationsReportController extends Controller
 {
     /**
      * Request generation of a new notifications report
-     *
-     * @param GenerateReportRequest $request
-     * @param GenerateReportAction $generateAction
-     *
-     * @return JsonResponse
      */
     public function generate(
         GenerateReportRequest $request,
@@ -36,10 +30,10 @@ class NotificationsReportController extends Controller
 
         return response()->json([
             'report_uuid' => $report->uuid,
-            'status' => $report->status,
-            'period' => [
+            'status'      => $report->status,
+            'period'      => [
                 'start' => $report->period_start->toIso8601String(),
-                'end' => $report->period_end->toIso8601String(),
+                'end'   => $report->period_end->toIso8601String(),
             ],
             'message' => 'Report generation started',
         ], 202);
@@ -47,11 +41,6 @@ class NotificationsReportController extends Controller
 
     /**
      * Get status of a report generation
-     *
-     * @param string $uuid
-     * @param GetReportStatusAction $getStatusAction
-     *
-     * @return JsonResponse
      */
     public function show(string $uuid, GetReportStatusAction $getStatusAction): JsonResponse
     {
@@ -65,22 +54,16 @@ class NotificationsReportController extends Controller
 
         return response()->json([
             'report_uuid' => $report->uuid,
-            'status' => $report->status,
-            'period' => [
+            'status'      => $report->status,
+            'period'      => [
                 'start' => $report->period_start->toIso8601String(),
-                'end' => $report->period_end->toIso8601String(),
+                'end'   => $report->period_end->toIso8601String(),
             ],
         ]);
     }
 
     /**
      * Download a generated report
-     *
-     * @param string $uuid
-     * @param GetReportStatusAction $getStatusAction
-     * @param DownloadReportAction $downloadAction
-     *
-     * @return JsonResponse|StreamedResponse
      */
     public function download(
         string $uuid,
@@ -95,13 +78,13 @@ class NotificationsReportController extends Controller
             ], 404);
         }
 
-        if (!$report->isCompleted()) {
+        if (! $report->isCompleted()) {
             return response()->json([
                 'message' => 'Report is not ready for download',
-                'status' => $report->status,
+                'status'  => $report->status,
             ], 400);
         }
-        if (!$downloadAction->fileExists($report)) {
+        if (! $downloadAction->fileExists($report)) {
             return response()->json([
                 'message' => 'Report file not found',
             ], 404);

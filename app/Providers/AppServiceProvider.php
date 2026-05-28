@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(ChannelManager::class, function ($app) {
             $manager = new ChannelManager;
-            $config = config('notifications.channels', []);
+            $config  = config('notifications.channels', []);
 
             foreach ($config as $class) {
                 $channel = $app->make($class);

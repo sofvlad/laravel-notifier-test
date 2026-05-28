@@ -33,8 +33,6 @@ class ChannelManager
 
     /**
      * Register a channel with the manager.
-     *
-     * @param ChannelInterface $channel The channel to register
      */
     public function register(ChannelInterface $channel): void
     {
@@ -43,7 +41,6 @@ class ChannelManager
 
     /**
      * Send a notification through the specified channel
-     *
      *
      * @throws InvalidArgumentException If the channel is not supported
      * @throws Throwable

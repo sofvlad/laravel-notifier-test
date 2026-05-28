@@ -17,9 +17,6 @@ use Throwable;
  */
 readonly class NotificationService
 {
-    /**
-     * @var LoggerInterface
-     */
     protected LoggerInterface $logger;
 
     public function __construct(
@@ -30,12 +27,6 @@ readonly class NotificationService
 
     /**
      * Create and send a notification
-     *
-     * @param int $userId The user ID
-     * @param string $message The notification message
-     * @param NotificationChannel $channel The notification channel
-     *
-     * @return Notification The created notification with final status
      */
     public function create(int $userId, string $message, NotificationChannel $channel): Notification
     {
@@ -52,7 +43,7 @@ readonly class NotificationService
             'user_id' => $userId,
             'message' => $message,
             'channel' => $channel->value,
-            'status' => NotificationStatus::PENDING,
+            'status'  => NotificationStatus::PENDING,
         ]);
 
         SendNotification::dispatch($notification->id);
@@ -60,7 +51,7 @@ readonly class NotificationService
         $this->logger->info(
             'Notification created successfully',
             [
-                'id' => $notification->id,
+                'id'      => $notification->id,
                 'user_id' => $userId,
                 'channel' => $channel->value,
             ]
@@ -71,8 +62,6 @@ readonly class NotificationService
 
     /**
      * Send a notification
-     *
-     * @param Notification $notification The notification to send
      *
      * @throws Throwable
      */

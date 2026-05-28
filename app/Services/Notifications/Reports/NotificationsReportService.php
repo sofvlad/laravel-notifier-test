@@ -14,9 +14,6 @@ use Psr\Log\LoggerInterface;
 
 class NotificationsReportService
 {
-    /**
-     * @var LoggerInterface
-     */
     protected LoggerInterface $logger;
 
     public function __construct(
@@ -27,14 +24,13 @@ class NotificationsReportService
     /**
      * Generate report for the given report record
      *
-     * @param NotificationsReport $report
      *
      * @return string Path to the generated file
      */
     public function generate(NotificationsReport $report): string
     {
         $report->update([
-            'status' => ReportStatus::PROCESSING->value,
+            'status'     => ReportStatus::PROCESSING->value,
             'started_at' => now(),
         ]);
 
@@ -43,14 +39,14 @@ class NotificationsReportService
         $filePath = $this->createReportFile($report, $stats);
 
         $report->update([
-            'status' => ReportStatus::COMPLETED->value,
-            'file_path' => $filePath,
+            'status'       => ReportStatus::COMPLETED->value,
+            'file_path'    => $filePath,
             'completed_at' => now(),
         ]);
 
         $this->logger->info('Report generated successfully', [
             'report_id' => $report->id,
-            'user_id' => $report->user_id,
+            'user_id'   => $report->user_id,
             'file_path' => $report->file_path,
         ]);
 
@@ -60,7 +56,6 @@ class NotificationsReportService
     /**
      * Collect statistics from notifications
      *
-     * @param NotificationsReport $report
      *
      * @return array{total: int, by_channel: array<string, array{total: int, errors: int}>}
      */
@@ -80,25 +75,25 @@ class NotificationsReportService
         }
 
         $byChannel = [];
-        $total = 0;
+        $total     = 0;
 
         foreach ($query->get() as $row) {
             $byChannel[$row->channel] = [
-                'total' => (int)$row->total,
-                'errors' => (int)$row->errors,
+                'total'  => (int) $row->total,
+                'errors' => (int) $row->errors,
             ];
-            $total += (int)$row->total;
+            $total += (int) $row->total;
         }
 
         // Ensure all known channels are present even with zero counts
         foreach (NotificationChannel::cases() as $channel) {
-            if (!isset($byChannel[$channel->value])) {
+            if (! isset($byChannel[$channel->value])) {
                 $byChannel[$channel->value] = ['total' => 0, 'errors' => 0];
             }
         }
 
         return [
-            'total' => $total,
+            'total'      => $total,
             'by_channel' => $byChannel,
         ];
     }
@@ -106,8 +101,6 @@ class NotificationsReportService
     /**
      * Create the report file in storage
      *
-     * @param NotificationsReport $report
-     * @param array $stats
      *
      * @return string Path to the file
      */
@@ -115,9 +108,9 @@ class NotificationsReportService
     {
         $jsonContent = json_encode([
             'report_id' => $report->id,
-            'period' => [
+            'period'    => [
                 'start' => $report->period_start->toIso8601String(),
-                'end' => $report->period_end->toIso8601String(),
+                'end'   => $report->period_end->toIso8601String(),
             ],
             'user_id' => $report->user_id,
             'summary' => [
@@ -126,8 +119,8 @@ class NotificationsReportService
             'by_channel' => array_map(function ($channelStats, $channel) {
                 return [
                     'channel' => $channel,
-                    'total' => $channelStats['total'],
-                    'errors' => $channelStats['errors'],
+                    'total'   => $channelStats['total'],
+                    'errors'  => $channelStats['errors'],
                 ];
             }, $stats['by_channel'], array_keys($stats['by_channel'])),
             'generated_at' => now()->toIso8601String(),

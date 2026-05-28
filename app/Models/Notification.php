@@ -16,7 +16,7 @@ class Notification extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'status' => NotificationStatus::class,
+        'status'  => NotificationStatus::class,
         'sent_at' => 'datetime',
     ];
 
@@ -36,7 +36,7 @@ class Notification extends Model
     ];
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected static function boot()
     {

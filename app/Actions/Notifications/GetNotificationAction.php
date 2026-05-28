@@ -12,8 +12,6 @@ class GetNotificationAction
     /**
      * Get report
      *
-     * @param string $uuid
-     * @return Notification|null
      * @throws ModelNotFoundException
      */
     public function execute(string $uuid): ?Notification

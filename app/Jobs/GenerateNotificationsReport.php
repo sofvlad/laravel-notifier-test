@@ -32,7 +32,7 @@ class GenerateNotificationsReport implements ShouldQueue
 
         $report = NotificationsReport::where('uuid', $this->reportUuid)->first();
 
-        if (!$report) {
+        if (! $report) {
             $logger->error('Report not found', ['report_uuid' => $this->reportUuid]);
 
             return;
@@ -42,14 +42,14 @@ class GenerateNotificationsReport implements ShouldQueue
             $reportService->generate($report);
         } catch (Throwable $e) {
             $report->update([
-                'status' => ReportStatus::FAILED->value,
+                'status'        => ReportStatus::FAILED->value,
                 'error_message' => $e->getMessage(),
             ]);
 
             $logger->error('Report generation failed', [
                 'report_uuid' => $this->reportUuid,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'error'       => $e->getMessage(),
+                'trace'       => $e->getTraceAsString(),
             ]);
 
             return;
@@ -57,8 +57,8 @@ class GenerateNotificationsReport implements ShouldQueue
 
         $logger->info('Report generated successfully', [
             'report_uuid' => $report->uuid,
-            'user_id' => $report->user_id,
-            'file_path' => $report->file_path,
+            'user_id'     => $report->user_id,
+            'file_path'   => $report->file_path,
         ]);
     }
 }

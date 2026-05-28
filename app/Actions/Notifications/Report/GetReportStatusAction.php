@@ -13,9 +13,6 @@ class GetReportStatusAction
     /**
      * Get report
      *
-     * @param string $uuid
-     * @param int|null $createdBy
-     * @return NotificationsReport|null
      * @throws ModelNotFoundException
      */
     public function execute(string $uuid, ?int $createdBy = null): ?NotificationsReport

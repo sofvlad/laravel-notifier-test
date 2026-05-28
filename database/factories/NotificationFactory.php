@@ -23,10 +23,10 @@ class NotificationFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
-            'message' => $this->faker->text(),
-            'status' => $this->faker->randomElement(NotificationStatus::cases())->value,
-            'channel' => $this->faker->randomElement(NotificationChannel::values()),
+            'user_id'       => User::factory(),
+            'message'       => $this->faker->text(),
+            'status'        => $this->faker->randomElement(NotificationStatus::cases())->value,
+            'channel'       => $this->faker->randomElement(NotificationChannel::values()),
             'error_message' => null,
         ];
     }

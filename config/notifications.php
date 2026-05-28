@@ -11,7 +11,7 @@ use App\Services\Notifications\Channels\TelegramChannel;
  */
 return [
     'channels' => [
-        'email' => EmailChannel::class,
+        'email'    => EmailChannel::class,
         'telegram' => TelegramChannel::class,
     ],
 ];

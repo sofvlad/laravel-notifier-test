@@ -13,13 +13,14 @@ class NotificationsReportTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected string $token;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        $this->user  = User::factory()->create();
         $this->token = $this->user->createToken('test-token')->plainTextToken;
     }
 
@@ -28,7 +29,8 @@ class NotificationsReportTest extends TestCase
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->postJson('/api/v1/reports/notifications/generate', [
                 'period_start' => '2025-01-01',
-                'period_end' => '2025-01-31',
+                'period_end'   => '2025-01-31',
+                'user_id'      => $this->user->id,
             ]);
 
         $response->assertStatus(202)
@@ -41,7 +43,7 @@ class NotificationsReportTest extends TestCase
 
         $this->assertDatabaseHas('notifications_reports', [
             'user_id' => $this->user->id,
-            'status' => ReportStatus::COMPLETED->value,
+            'status'  => ReportStatus::COMPLETED->value,
         ]);
     }
 
@@ -50,7 +52,7 @@ class NotificationsReportTest extends TestCase
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->postJson('/api/v1/reports/notifications/generate', [
                 'period_start' => 'invalid-date',
-                'period_end' => '2025-01-31',
+                'period_end'   => '2025-01-31',
             ]);
 
         $response->assertStatus(422);
@@ -61,7 +63,7 @@ class NotificationsReportTest extends TestCase
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->postJson('/api/v1/reports/notifications/generate', [
                 'period_start' => '2025-01-01',
-                'period_end' => '2025-06-01',
+                'period_end'   => '2025-06-01',
             ]);
 
         $response->assertStatus(422)
@@ -71,7 +73,7 @@ class NotificationsReportTest extends TestCase
     public function test_it_can_get_report_with_user(): void
     {
         $report = NotificationsReport::factory()->processing()->create([
-            'user_id' => $this->user->id,
+            'user_id'    => $this->user->id,
             'created_by' => $this->user->id,
         ]);
 
@@ -81,7 +83,7 @@ class NotificationsReportTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'report_uuid' => $report->uuid,
-                'status' => ReportStatus::PROCESSING->value,
+                'status'      => ReportStatus::PROCESSING->value,
             ]);
     }
 
@@ -97,7 +99,7 @@ class NotificationsReportTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'report_uuid' => $report->uuid,
-                'status' => ReportStatus::PROCESSING->value,
+                'status'      => ReportStatus::PROCESSING->value,
             ]);
     }
 
@@ -124,7 +126,7 @@ class NotificationsReportTest extends TestCase
     public function test_it_cannot_download_report_from_other_user(): void
     {
         $report = NotificationsReport::factory()->completed()->create([
-            'user_id' => User::factory()->create()->id,
+            'user_id'    => User::factory()->create()->id,
             'created_by' => $this->user->id,
         ]);
 
@@ -137,7 +139,7 @@ class NotificationsReportTest extends TestCase
     public function test_it_cannot_download_pending_report(): void
     {
         $report = NotificationsReport::factory()->pending()->create([
-            'user_id' => $this->user->id,
+            'user_id'    => $this->user->id,
             'created_by' => $this->user->id,
         ]);
 

@@ -20,8 +20,8 @@ class NotificationsReport extends Model
      */
     protected $casts = [
         'period_start' => 'datetime',
-        'period_end' => 'datetime',
-        'started_at' => 'datetime',
+        'period_end'   => 'datetime',
+        'started_at'   => 'datetime',
         'completed_at' => 'datetime',
     ];
 
@@ -42,7 +42,7 @@ class NotificationsReport extends Model
     ];
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected static function boot()
     {
