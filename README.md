@@ -48,13 +48,18 @@ cd laravel-notifier-test
 
 # Настроить окружение
 cp .env.example .env
-php artisan key:generate
 
 # Запустить Docker
 docker-compose up -d
 
+# Сгерировать ключ приложения
+docker-compose exec app php artisan key:generate
+
 # Добавить данные в базу
 docker-compose exec app php artisan db:seed
+
+# Сгенерировать токен для тестового пользователя
+docker compose exec app php artisan user:create-token test@example.com
 ```
 
 ## Архитектура
