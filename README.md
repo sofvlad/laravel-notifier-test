@@ -1,58 +1,526 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <a href="https://laravel.com" target="_blank">
+    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo">
+  </a>
 </p>
 
-## About Laravel
+<p align="center">
+  <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+  <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+  <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+  <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+# Система уведомлений Laravel
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+REST API для управления уведомлениями с поддержкой множественных каналов доставки и генерации отчётов.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Содержание
 
-## Learning Laravel
+- [Основные возможности](#-основные-возможности)
+- [Установка](#-установка)
+- [Архитектура](#-архитектура)
+- [API Документация](#-api-документация)
+- [Каналы уведомлений](#-каналы-уведомлений)
+- [Генерация отчётов](#-генерация-отчётов)
+- [Console команды](#-console-команды)
+- [Качество кода](#-качество-кода)
+- [Тестирование](#-тестирование)
+- [Что можно улучшить](#-что-можно-улучшить)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Основные возможности
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- ✅ **RESTful API** для работы с уведомлениями
+- ✅ **Мультиканальность** — поддержка Email и Telegram
+- ✅ **Генерация отчётов** со статистикой по каналам и ошибкам
+- ✅ **Асинхронная обработка** через Laravel Jobs
+- ✅ **Отслеживание статуса** в реальном времени
+- ✅ **Расширяемая архитектура** — лёгкое добавление новых каналов
+- ✅ **Тестирование** — настройка и выполнение тестов
+- ✅ **Логирование** — отслеживание действий системы с уведомлениями
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Установка
 
 ```bash
-composer require laravel/boost --dev
+# Клонировать репозиторий
+git clone https://github.com/your-org/laravel-notifier-test.git
+cd laravel-notifier-test
 
-php artisan boost:install
+# Настроить окружение
+cp .env.example .env
+php artisan key:generate
+
+# Запустить Docker
+docker-compose up -d
+
+# Выполнить миграции
+docker-compose exec app php artisan migrate
+
+# Запустить очереди для асинхронной обработки
+docker-compose exec app php artisan queue:work
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Архитектура
 
-## Contributing
+### Структура проекта
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```
+app/
+├── Actions/                          # Бизнес-логика в виде изолированных действий
+│   └── Notifications/
+│       ├── StoreNotificationAction.php     # Создание нового уведомления
+│       ├── GetNotificationAction.php       # Получение уведомления по UUID
+│       ├── ListNotificationsAction.php     # Получение списка уведомлений с пагинацией
+│       └── Report/
+│           ├── GenerateReportAction.php    # Запуск генерации отчёта
+│           ├── GetReportStatusAction.php   # Проверка статуса генерации отчёта
+│           └── DownloadReportAction.php    # Скачивание готового отчёта
+├── Http/Controllers/Api/             # Контроллеры REST API
+│   ├── NotificationController.php          # CRUD операции с уведомлениями
+│   └── NotificationsReportController.php   # Управление генерацией отчётов
+├── Contracts/Notifications/
+│   └── ChannelInterface.php        # Контракт для каналов уведомлений (Strategy Pattern)
+├── Enums/
+│   ├── NotificationChannel.php     # Типы каналов: email, telegram
+│   ├── NotificationStatus.php      # Статусы: pending, sent, failed
+│   └── ReportStatus.php            # Статусы отчётов: pending, processing, completed, failed
+├── Models/
+│   ├── Notification.php            # Модель уведомления с отношениями и scope-ами
+│   ├── NotificationsReport.php     # Модель отчёта с историей генерации
+│   └── User.php                    # Модель пользователя с аутентификацией через Sanctum
+├── Services/Notifications/         # Сервисный слой для бизнес-логики
+│   ├── ChannelManager.php          # Диспетчер каналов (выбирает нужный канал)
+│   ├── NotificationService.php     # Оркестрация операций с уведомлениями
+│   └── Reports/
+│       └── NotificationsReportService.php  # Логика генерации статистических отчётов
+└── Jobs/
+    ├── SendNotification.php        # Асинхронная отправка уведомления через очередь
+    └── GenerateNotificationsReport.php  # Асинхронная генерация отчёта
+```
 
-## Code of Conduct
+### Паттерны проектирования
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- **Action Pattern** — каждый действие реализует `ActionInterface`, что позволяет держать тонкий контроллер
+- **Strategy Pattern** — каждый канал уведомлений реализует `ChannelInterface`, что позволяет легко добавлять новые каналы без изменения существующего кода
+- **Service Layer** — бизнес-логика инкапсулирована в сервисах (`NotificationService`, `NotificationsReportService`)
+- **Action Pattern** — сложные операции разбиты на атомарные действия (`Actions/Notifications/`)
+- **Manager Pattern** — `ChannelManager` централизованно управляет доступными каналами
 
-## Security Vulnerabilities
+### Связи компонентов
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```
+API Controller → Action → Service → Job → Channel
+     ↓              ↓         ↓        ↓       ↓
+  Request      Business   Logic   Queue   Email/
+                 Logic           Worker  Telegram
+```
 
-## License
+1. **Контроллер** принимает HTTP-запрос и валидирует входные данные
+2. **Action** обрабатывает конкретную бизнес-операцию
+3. **Service** оркестрирует несколько действий и работает с моделями
+4. **Job** помещает задачу в очередь для асинхронной обработки
+5. **Channel** реализует конкретный механизм доставки уведомления
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## API Документация
+
+### Аутентификация
+
+Все API запросы требуют аутентификации через Laravel Sanctum:
+
+```bash
+curl -H "Authorization: Bearer {token}" ...
+```
+
+### Уведомления
+
+#### Создать уведомление
+
+```http
+POST /api/v1/notifications
+Content-Type: application/json
+Authorization: Bearer {token}
+
+{
+  "user_id": 1,
+  "message": "Ваш заказ доставлен",
+  "channel": "email"
+}
+```
+
+**Параметры:**
+- `user_id` (integer, required) — ID пользователя-получателя
+- `message` (string, required) — Текст сообщения (макс. 500 символов)
+- `channel` (string, required) — Канал: `email` или `telegram`
+
+**Ответ:**
+```json
+{
+    "uuid": "550e8400-e29b-41d4-a716-446655440000",
+    "user_id": 1,
+    "message": "Ваш заказ доставлен",
+    "channel": "email",
+    "status": "pending",
+    "created_at": "2024-01-15T10:30:00Z"
+}
+```
+
+#### Получить уведомление
+
+```http
+GET /api/v1/notifications/{notification_uuid}
+Authorization: Bearer {token}
+```
+
+**Ответ:**
+```json
+{
+    "uuid": "550e8400-e29b-41d4-a716-446655440000",
+    "user_id": 1,
+    "message": "Ваш заказ доставлен",
+    "channel": "email",
+    "status": "sent",
+    "error_message": null,
+    "sent_at": "2024-01-15T10:30:05Z",
+    "created_at": "2024-01-15T10:30:00Z"
+}
+```
+
+### Отчёты
+
+#### Запросить генерацию отчёта
+
+```http
+POST /api/v1/reports/notifications/generate
+Content-Type: application/json
+Authorization: Bearer {token}
+
+{
+  "period_start": "2024-01-01",
+  "period_end": "2024-01-31",
+  "user_id": 1
+}
+```
+
+**Параметры:**
+- `period_start` (string, required) — Начало периода (YYYY-MM-DD)
+- `period_end` (string, required) — Конец периода (YYYY-MM-DD)
+- `user_id` (integer, optional) — ID пользователя (если не указан — все пользователи)
+
+**Ответ (202 Accepted):**
+```json
+{
+    "report_uuid": "550e8400-e29b-41d4-a716-446655440000",
+    "status": "pending",
+    "period": {
+        "start": "2024-01-01T00:00:00Z",
+        "end": "2024-01-31T23:59:59Z"
+    },
+    "message": "Report generation started"
+}
+```
+
+#### Проверить статус отчёта
+
+```http
+GET /api/v1/reports/notifications/{report_uuid}
+Authorization: Bearer {token}
+```
+
+**Ответ:**
+```json
+{
+    "report_uuid": "550e8400-e29b-41d4-a716-446655440000",
+    "status": "completed",
+    "period": {
+        "start": "2024-01-01T00:00:00Z",
+        "end": "2024-01-31T23:59:59Z"
+    }
+}
+```
+
+**Возможные статусы:**
+- `pending` — Отчёт поставлен в очередь
+- `processing` — Генерация отчёта в процессе
+- `completed` — Отчёт готов к скачиванию
+- `failed` — Ошибка генерации
+
+#### Скачать отчёт
+
+```http
+GET /api/v1/reports/notifications/{report_uuid}/download
+Authorization: Bearer {token}
+```
+
+**Ответ (успешно):**
+```json
+{
+    "report_id": "550e8400-e29b-41d4-a716-446655440000",
+    "period": {
+        "start": "2024-01-01T00:00:00Z",
+        "end": "2024-01-31T23:59:59Z"
+    },
+    "user_id": 1,
+    "summary": {
+        "total_notifications": 150
+    },
+    "by_channel": [
+        {
+            "channel": "email",
+            "total": 100,
+            "errors": 5
+        },
+        {
+            "channel": "telegram",
+            "total": 50,
+            "errors": 2
+        }
+    ],
+    "generated_at": "2024-01-15T12:00:00Z"
+}
+```
+
+## Каналы уведомлений
+
+### Структура канала
+
+Каждый канал реализует контракт `ChannelInterface`:
+
+```php
+namespace App\Contracts\Notifications;
+
+use App\Models\Notification;
+
+interface ChannelInterface
+{
+    public function getName(): string;
+    public function send(Notification $notification): void;
+}
+```
+
+### Добавление нового канала
+
+Для добавления нового канала необходимо:
+
+1. **Создать Enum значение** в `NotificationChannel`:
+   ```php
+   case SMS = 'sms';
+   ```
+
+2. **Реализовать класс канала**:
+   ```php
+   namespace App\Services\Notifications\Channels;
+   
+   use App\Contracts\Notifications\ChannelInterface;
+   use App\Models\Notification;
+   
+   class SmsChannel implements ChannelInterface
+   {
+       public function getName(): string
+       {
+           return NotificationChannel::SMS->value;
+       }
+   
+       public function send(Notification $notification): void
+       {
+           // Реализация отправки SMS
+       }
+   }
+   ```
+3. **Зарегистрировать в `config/notifications.php`**
+   ```php
+   return [
+       'channels' => [
+           'sms' => SmsChannel::class,
+       ],
+   ];
+   ```
+
+## Генерация отчётов
+
+### Что содержит отчёт
+
+Отчёт по уведомлениям включает:
+
+- **Общая статистика** — общее количество уведомлений
+- **По каналам** — разбивка по каждому каналу:
+    - Количество отправленных уведомлений
+    - Количество ошибок
+- **Период** — даты начала и конца отчётного периода
+- **Временная метка** — время генерации отчёта
+
+### Формат отчёта
+
+Отчёты генерируются в формате JSON:
+
+```json
+{
+    "report_id": "550e8400-e29b-41d4-a716-446655440000",
+    "period": {
+        "start": "2024-01-01T00:00:00Z",
+        "end": "2024-01-31T23:59:59Z"
+    },
+    "user_id": 1,
+    "summary": {
+        "total_notifications": 150
+    },
+    "by_channel": [
+        {
+            "channel": "email",
+            "total": 100,
+            "errors": 5
+        },
+        {
+            "channel": "telegram",
+            "total": 50,
+            "errors": 2
+        }
+    ],
+    "generated_at": "2024-01-15T12:00:00Z"
+}
+```
+
+### Асинхронная обработка
+
+Генерация отчётов выполняется асинхронно через Laravel Jobs:
+
+Это позволяет обрабатывать большие объёмы данных без блокировки API.
+
+## Console команды
+
+### Управление пользователями
+
+#### Создать пользователя
+
+```bash
+php artisan user:create {name?} {email?} [--password=]
+```
+
+**Параметры:**
+- `name` — Имя пользователя (запросит интерактивно, если не указан)
+- `email` — Email пользователя (запросит интерактивно, если не указан)
+- `--password=` — Пароль (запросит интерактивно, если не указан)
+
+**Примеры:**
+```bash
+# Интерактивный режим
+docker-compose exec app php artisan user:create
+
+# С параметрами
+docker-compose exec app php artisan user:create John john@example.com --password=secret123
+```
+
+#### Создать API токен
+
+```bash
+php artisan user:create-token {email?} [--name=]
+```
+
+**Параметры:**
+- `email` — Email пользователя (запросит интерактивно, если не указан)
+- `--name=` — Имя токена (по умолчанию: "Personal Access Token")
+
+**Примеры:**
+```bash
+# Интерактивный режим
+docker-compose exec app php artisan user:create-token
+
+# С email
+docker-compose exec app php artisan user:create-token john@example.com
+
+# С именем токена
+docker-compose exec app php artisan user:create-token john@example.com --name="Mobile App Token"
+```
+
+**Вывод команды:**
+```
+API token created for admin [John] (john@example.com):
+
+1|abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGH
+
+Make sure to save this token securely. It will not be shown again.
+```
+
+⚠️ **Важно:** Токен показывается только один раз. Сохраните его в безопасном месте!
+
+### Управление токенами
+
+#### Показать токены пользователя
+
+```bash
+php artisan user:show-tokens {email?}
+```
+
+**Параметры:**
+- `email` — Email пользователя (запросит интерактивно, если не указан)
+
+**Пример:**
+```bash
+docker-compose exec app php artisan user:api-tokens john@example.com
+```
+
+**Вывод команды:**
+```
+Tokens for user [John] (john@example.com):
+
++---+-----------------------+---------------------+---------------------+--------+---------+
+| # | Name                  | Created             | Last Used           | Scopes | Revoked |
++---+-----------------------+---------------------+---------------------+--------+---------+
+| 1 | Old Access Token      | 2026-05-28 15:52:15 | 2026-05-28 15:56:43 | *      | No      |
+| 2 | Personal Access Token | 2026-02-12 14:25:55 | 2026-03-09 09:46:24 | *      | No      |
++---+-----------------------+---------------------+---------------------+--------+---------+
+```
+
+### Список всех команд
+
+```bash
+# Показать все доступные команды
+docker-compose exec app php artisan list
+
+# Показать команды в группе users
+docker-compose exec app php artisan list user
+```
+
+## Качество кода
+
+### PHPStan (статический анализатор)
+
+Используется для обнаружения потенциальных ошибок и проблем с типами в коде.
+
+Конфигурация: `phpstan.neon`
+
+Уровень строгости: 5 (средний уровень проверки)
+
+```bash
+docker-compose exec app composer analyse
+```
+
+### PHP Pint (код-стайлер)
+
+Используется для автоматического форматирования кода согласно стандартам Laravel.
+
+Конфигурация: `pint.neon`
+
+```bash
+# Исправить ошибки форматирования
+docker-compose exec app composer pint
+```
+
+## Тестирование
+
+```bash
+# Запустить тесты
+docker-compose exec app php artisan test
+```
+
+### Покрытие тестами
+
+- ✅ `NotificationTest` — тесты CRUD операций с уведомлениями
+- ✅ `NotificationsReportTest` — тесты генерации отчётов
+- ✅ `NotificationsReportServiceTest` — тесты сервиса отчётов
+
+## Что можно улучшить
+
+- Добавить RateLimiter
+- Добавить OpenAPI (Swagger)
+- Добавить другие форматы для выгрузки отчётов
+- Страница вывода всех уведомлений в системе с фильтрацией
