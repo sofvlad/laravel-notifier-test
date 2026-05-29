@@ -449,7 +449,7 @@ Make sure to save this token securely. It will not be shown again.
 #### Показать токены пользователя
 
 ```bash
-php artisan user:show-tokens {email?}
+php artisan user:api-tokens {email?}
 ```
 
 **Параметры:**
