@@ -3,6 +3,7 @@
 namespace Tests\Feature\Api;
 
 use App\Enums\NotificationChannel;
+use App\Enums\NotificationPriority;
 use App\Enums\NotificationStatus;
 use App\Models\Notification;
 use App\Models\User;
@@ -29,24 +30,27 @@ class NotificationTest extends TestCase
     {
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->postJson('/api/v1/notifications', [
-                'user_id' => $this->user->id,
-                'message' => 'Test notification message',
-                'channel' => NotificationChannel::EMAIL->value,
+                'user_id'       => $this->user->id,
+                'message'       => 'Test notification message',
+                'channel'       => NotificationChannel::EMAIL->value,
+                'priority'      => NotificationPriority::DEFAULT->value,
             ]);
 
         $response->assertStatus(201)
             ->assertJsonFragment([
-                'user_id' => $this->user->id,
-                'message' => 'Test notification message',
-                'channel' => NotificationChannel::EMAIL->value,
-                'status'  => NotificationStatus::SENT->value,
+                'user_id'       => $this->user->id,
+                'message'       => 'Test notification message',
+                'channel'       => NotificationChannel::EMAIL->value,
+                'status'        => NotificationStatus::SENT->value,
+                'priority'      => NotificationPriority::DEFAULT->value,
             ]);
 
         $this->assertDatabaseHas('notifications', [
-            'user_id' => $this->user->id,
-            'message' => 'Test notification message',
-            'channel' => NotificationChannel::EMAIL->value,
-            'status'  => NotificationStatus::SENT->value,
+            'user_id'       => $this->user->id,
+            'message'       => 'Test notification message',
+            'channel'       => NotificationChannel::EMAIL->value,
+            'status'        => NotificationStatus::SENT->value,
+            'priority'      => NotificationPriority::DEFAULT->value,
         ]);
     }
 
@@ -54,9 +58,10 @@ class NotificationTest extends TestCase
     {
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
             ->postJson('/api/v1/notifications', [
-                'user_id' => $this->user->id,
-                'message' => str_repeat('a', 501),
-                'channel' => NotificationChannel::EMAIL->value,
+                'user_id'       => $this->user->id,
+                'message'       => str_repeat('a', 501),
+                'channel'       => NotificationChannel::EMAIL->value,
+                'priority'      => NotificationPriority::DEFAULT->value,
             ]);
 
         $response->assertStatus(422)
@@ -79,10 +84,11 @@ class NotificationTest extends TestCase
     public function test_can_get_notification_status(): void
     {
         $notification = Notification::factory()->create([
-            'user_id' => $this->user->id,
-            'message' => 'Test message',
-            'status'  => NotificationStatus::SENT,
-            'channel' => NotificationChannel::EMAIL->value,
+            'user_id'       => $this->user->id,
+            'message'       => 'Test message',
+            'status'        => NotificationStatus::SENT,
+            'channel'       => NotificationChannel::EMAIL->value,
+            'priority'      => NotificationPriority::DEFAULT->value,
         ]);
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
@@ -99,27 +105,30 @@ class NotificationTest extends TestCase
     {
         for ($i = 0; $i < 3; $i++) {
             Notification::factory()->create([
-                'user_id' => $this->user->id,
-                'message' => "Message {$i}",
-                'status'  => NotificationStatus::SENT,
-                'channel' => NotificationChannel::EMAIL->value,
+                'user_id'       => $this->user->id,
+                'message'       => "Message {$i}",
+                'status'        => NotificationStatus::SENT,
+                'channel'       => NotificationChannel::EMAIL->value,
+                'priority'      => NotificationPriority::DEFAULT->value,
             ]);
         }
 
         for ($i = 0; $i < 2; $i++) {
             Notification::factory()->create([
-                'user_id' => $this->user->id,
-                'message' => "Telegram {$i}",
-                'status'  => NotificationStatus::SENT,
-                'channel' => NotificationChannel::TELEGRAM->value,
+                'user_id'       => $this->user->id,
+                'message'       => "Telegram {$i}",
+                'status'        => NotificationStatus::SENT,
+                'channel'       => NotificationChannel::TELEGRAM->value,
+                'priority'      => NotificationPriority::DEFAULT->value,
             ]);
         }
 
         Notification::factory()->create([
-            'user_id' => User::factory()->create()->id,
-            'message' => 'Other user',
-            'status'  => NotificationStatus::SENT,
-            'channel' => NotificationChannel::EMAIL->value,
+            'user_id'       => User::factory()->create()->id,
+            'message'       => 'Other user',
+            'status'        => NotificationStatus::SENT,
+            'channel'       => NotificationChannel::EMAIL->value,
+            'priority'      => NotificationPriority::DEFAULT->value,
         ]);
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
@@ -132,17 +141,19 @@ class NotificationTest extends TestCase
     public function test_can_filter_notifications_by_status(): void
     {
         Notification::factory()->create([
-            'user_id' => $this->user->id,
-            'message' => 'Sent message',
-            'status'  => NotificationStatus::SENT,
-            'channel' => NotificationChannel::EMAIL->value,
+            'user_id'       => $this->user->id,
+            'message'       => 'Sent message',
+            'status'        => NotificationStatus::SENT,
+            'channel'       => NotificationChannel::EMAIL->value,
+            'priority'      => NotificationPriority::DEFAULT->value,
         ]);
 
         Notification::factory()->create([
-            'user_id' => $this->user->id,
-            'message' => 'Failed message',
-            'status'  => NotificationStatus::FAILED,
-            'channel' => NotificationChannel::EMAIL->value,
+            'user_id'       => $this->user->id,
+            'message'       => 'Failed message',
+            'status'        => NotificationStatus::FAILED,
+            'channel'       => NotificationChannel::EMAIL->value,
+            'priority'      => NotificationPriority::DEFAULT->value,
         ]);
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
@@ -161,19 +172,21 @@ class NotificationTest extends TestCase
     {
         for ($i = 0; $i < 2; $i++) {
             Notification::factory()->create([
-                'user_id' => $this->user->id,
-                'message' => "Email {$i}",
-                'status'  => NotificationStatus::SENT,
-                'channel' => NotificationChannel::EMAIL->value,
+                'user_id'       => $this->user->id,
+                'message'       => "Email {$i}",
+                'status'        => NotificationStatus::SENT,
+                'channel'       => NotificationChannel::EMAIL->value,
+                'priority'      => NotificationPriority::DEFAULT->value,
             ]);
         }
 
         for ($i = 0; $i < 3; $i++) {
             Notification::factory()->create([
-                'user_id' => $this->user->id,
-                'message' => "Telegram {$i}",
-                'status'  => NotificationStatus::SENT,
-                'channel' => NotificationChannel::TELEGRAM->value,
+                'user_id'       => $this->user->id,
+                'message'       => "Telegram {$i}",
+                'status'        => NotificationStatus::SENT,
+                'channel'       => NotificationChannel::TELEGRAM->value,
+                'priority'      => NotificationPriority::DEFAULT->value,
             ]);
         }
 

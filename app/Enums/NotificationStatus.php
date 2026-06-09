@@ -10,12 +10,17 @@ namespace App\Enums;
 enum NotificationStatus: string
 {
     /**
-     * Notification created but not yet sent
+     * Notification created, waiting to be processed
      */
     case PENDING = 'pending';
 
     /**
-     * Notification successfully sent
+     * Notification is currently being processed/sent
+     */
+    case PROCESSING = 'processing';
+
+    /**
+     * Notification sent successfully
      */
     case SENT = 'sent';
 

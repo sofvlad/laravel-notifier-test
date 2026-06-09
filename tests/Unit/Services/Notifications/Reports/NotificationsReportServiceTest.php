@@ -3,6 +3,7 @@
 namespace Tests\Unit\Services\Notifications\Reports;
 
 use App\Enums\NotificationChannel;
+use App\Enums\NotificationPriority;
 use App\Enums\NotificationStatus;
 use App\Enums\ReportStatus;
 use App\Models\Notification;
@@ -39,10 +40,11 @@ class NotificationsReportServiceTest extends TestCase
     public function test_it_generates_report_with_correct_statistics(): void
     {
         Notification::create([
-            'user_id' => $this->user->id,
-            'message' => 'Test message 1',
-            'channel' => NotificationChannel::EMAIL->value,
-            'status'  => NotificationStatus::SENT->value,
+            'user_id'  => $this->user->id,
+            'message'  => 'Test message 1',
+            'channel'  => NotificationChannel::EMAIL->value,
+            'status'   => NotificationStatus::SENT->value,
+            'priority' => NotificationPriority::DEFAULT->value,
         ]);
 
         Notification::create([
@@ -51,13 +53,15 @@ class NotificationsReportServiceTest extends TestCase
             'channel'       => NotificationChannel::EMAIL->value,
             'status'        => NotificationStatus::FAILED->value,
             'error_message' => 'SMTP error',
+            'priority'      => NotificationPriority::DEFAULT->value,
         ]);
 
         Notification::create([
-            'user_id' => $this->user->id,
-            'message' => 'Test message 3',
-            'channel' => NotificationChannel::TELEGRAM->value,
-            'status'  => NotificationStatus::SENT->value,
+            'user_id'  => $this->user->id,
+            'message'  => 'Test message 3',
+            'channel'  => NotificationChannel::TELEGRAM->value,
+            'status'   => NotificationStatus::SENT->value,
+            'priority' => NotificationPriority::DEFAULT->value,
         ]);
 
         $report = NotificationsReport::create([
@@ -88,31 +92,35 @@ class NotificationsReportServiceTest extends TestCase
     public function test_it_counts_errors_correctly(): void
     {
         Notification::create([
-            'user_id' => $this->user->id,
-            'message' => 'Sent 1',
-            'channel' => NotificationChannel::EMAIL->value,
-            'status'  => NotificationStatus::SENT->value,
+            'user_id'  => $this->user->id,
+            'message'  => 'Sent 1',
+            'channel'  => NotificationChannel::EMAIL->value,
+            'status'   => NotificationStatus::SENT->value,
+            'priority' => NotificationPriority::DEFAULT->value,
         ]);
 
         Notification::create([
-            'user_id' => $this->user->id,
-            'message' => 'Failed 1',
-            'channel' => NotificationChannel::EMAIL->value,
-            'status'  => NotificationStatus::FAILED->value,
+            'user_id'  => $this->user->id,
+            'message'  => 'Failed 1',
+            'channel'  => NotificationChannel::EMAIL->value,
+            'status'   => NotificationStatus::FAILED->value,
+            'priority' => NotificationPriority::DEFAULT->value,
         ]);
 
         Notification::create([
-            'user_id' => $this->user->id,
-            'message' => 'Failed 2',
-            'channel' => NotificationChannel::EMAIL->value,
-            'status'  => NotificationStatus::FAILED->value,
+            'user_id'  => $this->user->id,
+            'message'  => 'Failed 2',
+            'channel'  => NotificationChannel::EMAIL->value,
+            'status'   => NotificationStatus::FAILED->value,
+            'priority' => NotificationPriority::DEFAULT->value,
         ]);
 
         Notification::create([
-            'user_id' => $this->user->id,
-            'message' => 'Sent 2',
-            'channel' => NotificationChannel::TELEGRAM->value,
-            'status'  => NotificationStatus::SENT->value,
+            'user_id'  => $this->user->id,
+            'message'  => 'Sent 2',
+            'channel'  => NotificationChannel::TELEGRAM->value,
+            'status'   => NotificationStatus::SENT->value,
+            'priority' => NotificationPriority::DEFAULT->value,
         ]);
 
         $report = NotificationsReport::create([
@@ -144,6 +152,7 @@ class NotificationsReportServiceTest extends TestCase
             'channel'    => NotificationChannel::EMAIL->value,
             'status'     => NotificationStatus::SENT->value,
             'created_at' => now()->subDays(20),
+            'priority'   => NotificationPriority::DEFAULT->value,
         ]);
 
         Notification::forceCreate([
@@ -152,6 +161,7 @@ class NotificationsReportServiceTest extends TestCase
             'channel'    => NotificationChannel::EMAIL->value,
             'status'     => NotificationStatus::SENT->value,
             'created_at' => now()->subDays(5),
+            'priority'   => NotificationPriority::DEFAULT->value,
         ]);
 
         $report = NotificationsReport::create([
@@ -171,10 +181,11 @@ class NotificationsReportServiceTest extends TestCase
     public function test_it_generates_correct_file_structure(): void
     {
         Notification::create([
-            'user_id' => $this->user->id,
-            'message' => 'Test',
-            'channel' => NotificationChannel::EMAIL->value,
-            'status'  => NotificationStatus::SENT->value,
+            'user_id'  => $this->user->id,
+            'message'  => 'Test',
+            'channel'  => NotificationChannel::EMAIL->value,
+            'status'   => NotificationStatus::SENT->value,
+            'priority' => NotificationPriority::DEFAULT->value,
         ]);
 
         $report = NotificationsReport::create([
@@ -203,10 +214,11 @@ class NotificationsReportServiceTest extends TestCase
     public function test_it_updates_status_to_processing_during_generation(): void
     {
         Notification::create([
-            'user_id' => $this->user->id,
-            'message' => 'Test',
-            'channel' => NotificationChannel::EMAIL->value,
-            'status'  => NotificationStatus::SENT->value,
+            'user_id'  => $this->user->id,
+            'message'  => 'Test',
+            'channel'  => NotificationChannel::EMAIL->value,
+            'status'   => NotificationStatus::SENT->value,
+            'priority' => NotificationPriority::DEFAULT->value,
         ]);
 
         $report = NotificationsReport::create([

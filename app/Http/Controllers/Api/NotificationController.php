@@ -8,11 +8,13 @@ use App\Actions\Notifications\GetNotificationAction;
 use App\Actions\Notifications\ListNotificationsAction;
 use App\Actions\Notifications\StoreNotificationAction;
 use App\Enums\NotificationChannel;
+use App\Enums\NotificationPriority;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Notification\ListNotificationsRequest;
 use App\Http\Requests\Api\Notification\StoreNotificationRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use InvalidArgumentException;
 
 /**
  * Controller for managing notifications
@@ -56,12 +58,23 @@ class NotificationController extends Controller
         StoreNotificationRequest $request,
         StoreNotificationAction $storeAction
     ): JsonResponse {
-        $notification = $storeAction->execute(
-            $request->integer('user_id'),
+        $userIds = $request->array('user_ids');
+        if (empty($userIds)) {
+            if (! $request->has('user_id')) {
+                throw new InvalidArgumentException('Either user_ids or user_id must be provided');
+            }
+            $userIds = [$request->integer('user_id')];
+        }
+
+        $notifications = $storeAction->execute(
+            array_unique($userIds),
             $request->string('message')->toString(),
-            NotificationChannel::from($request->string('channel')->toString())
+            NotificationChannel::from($request->string('channel')->toString()),
+            NotificationPriority::from($request->string('priority')->toString())
         );
 
-        return response()->json($notification, 201);
+        return response()->json([
+            'items' => $notifications,
+        ], 201);
     }
 }

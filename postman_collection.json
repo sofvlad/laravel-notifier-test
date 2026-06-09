@@ -1,0 +1,384 @@
+{
+  "info": {
+    "name": "Laravel Notification System API",
+    "description": "REST API для управления уведомлениями с поддержкой множественных каналов доставки и генерации отчётов",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Create Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications"
+              ]
+            },
+            "description": "Создание нового уведомления\n\nПараметры:\n- user_id (integer, required) — ID пользователя-получателя\n- message (string, required) — Текст сообщения (макс. 500 символов)\n- channel (string, required) — Канал: email или telegram"
+          },
+          "response": [
+            {
+              "name": "Success 201",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_ids\": [1],\n  \"message\": \"Ваш заказ доставлен\",\n  \"channel\": \"email\",\n  \"priority\": \"critical\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/notifications",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "notifications"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "Text",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"notifications\": [\n        \"uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n        \"user_id\": 1,\n        \"message\": \"Ваш заказ доставлен\",\n        \"channel\": \"email\",\n        \"priority\": \"critical\",\n        \"status\": \"pending\",\n        \"created_at\": \"2024-01-15T10:30:00Z\"\n    ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Notification by UUID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/{{notification_uuid}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "{{notification_uuid}}"
+              ]
+            },
+            "description": "Получение уведомления по UUID"
+          },
+          "response": []
+        },
+        {
+          "name": "List All Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications?page=1&per_page=15",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Номер страницы"
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Количество элементов на странице"
+                },
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "description": "Фильтр по статусу: pending, sent, failed",
+                  "disabled": true
+                },
+                {
+                  "key": "channel",
+                  "value": "email",
+                  "description": "Фильтр по каналу: email, telegram",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Получение списка уведомлений с пагинацией"
+          },
+          "response": [
+            {
+              "name": "Success 200",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/notifications?user_id=1&page=1&per_page=15",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "notifications"
+                  ],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "1"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "Text",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        }
+      ],
+      "description": "CRUD операции с уведомлениями"
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Generate Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/notifications/generate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "notifications",
+                "generate"
+              ]
+            },
+            "description": "Запуск генерации отчёта (асинхронно)\n\nПараметры:\n- period_start (string, required) — Начало периода (YYYY-MM-DD)\n- period_end (string, required) — Конец периода (YYYY-MM-DD)\n- user_id (integer, optional) — ID пользователя (если не указан — все пользователи)"
+          },
+          "response": [
+            {
+              "name": "Accepted 202",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"period_start\": \"2026-06-01\",\n  \"period_end\": \"2026-07-31\",\n  \"user_id\": 1\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/reports/notifications/generate",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "reports",
+                    "notifications",
+                    "generate"
+                  ]
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "_postman_previewlanguage": "Text",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Get Report Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/notifications/{{report_uuid}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "notifications",
+                "{{report_uuid}}"
+              ]
+            },
+            "description": "Проверка статуса генерации отчёта\n\nВозможные статусы:\n- pending — Отчёт поставлен в очередь\n- processing — Генерация отчёта в процессе\n- completed — Отчёт готов к скачиванию\n- failed — Ошибка генерации"
+          },
+          "response": []
+        },
+        {
+          "name": "Download Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/notifications/{{report_uuid}}/download",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "notifications",
+                "{{report_uuid}}",
+                "download"
+              ]
+            },
+            "description": "Скачивание готового отчёта в формате JSON"
+          },
+          "response": []
+        }
+      ],
+      "description": "Управление генерацией отчётов по уведомлениям"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{api_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "api_token",
+      "value": ""
+    },
+    {
+      "key": "notification_uuid",
+      "value": ""
+    },
+    {
+      "key": "report_uuid",
+      "value": ""
+    }
+  ]
+}

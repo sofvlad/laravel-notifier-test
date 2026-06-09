@@ -129,7 +129,7 @@ return [
 
         'notifier' => [
             'driver'               => 'daily',
-            'path'                 => storage_path('logs/notifier.log'),
+            'path'                 => storage_path('logs/notifications.log'),
             'level'                => env('LOG_LEVEL', 'debug'),
             'days'                 => 10,
             'replace_placeholders' => true,

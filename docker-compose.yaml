@@ -45,9 +45,22 @@ services:
     networks:
       - notify
 
+  redis:
+    image: redis:alpine
+    container_name: notify_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - notify
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
 networks:
   notify:
     driver: bridge
 
 volumes:
   mysql_data:
+  redis_data:

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\NotificationPriority;
 use App\Enums\NotificationStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,8 +17,9 @@ class Notification extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'status'  => NotificationStatus::class,
-        'sent_at' => 'datetime',
+        'status'   => NotificationStatus::class,
+        'priority' => NotificationPriority::class,
+        'sent_at'  => 'datetime',
     ];
 
     /**
@@ -30,6 +32,7 @@ class Notification extends Model
         'user_id',
         'message',
         'status',
+        'priority',
         'channel',
         'error_message',
         'sent_at',
