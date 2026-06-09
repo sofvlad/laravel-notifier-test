@@ -9,6 +9,7 @@ use Illuminate\Contracts\Redis\Factory as RedisFactory;
 class IdempotencyService
 {
     private const LOCK_SUFFIX = ':lock';
+
     private const RESPONSE_SUFFIX = ':response';
 
     public function __construct(
@@ -18,15 +19,15 @@ class IdempotencyService
     public function acquireLock(string $cacheKey, string $requestId): bool
     {
         $lockKey = $cacheKey . self::LOCK_SUFFIX;
-        $ttl = config('idempotency.lock_ttl', 30);
+        $ttl     = config('idempotency.lock_ttl', 30);
 
         return $this->redis->set(
-                $lockKey,
-                $requestId,
-                'EX',
-                $ttl,
-                'NX'
-            ) !== null;
+            $lockKey,
+            $requestId,
+            'EX',
+            $ttl,
+            'NX'
+        ) !== null;
     }
 
     public function releaseLock(string $cacheKey, string $requestId): void
@@ -47,7 +48,7 @@ class IdempotencyService
     public function getCachedResponse(string $cacheKey): ?array
     {
         $responseKey = $cacheKey . self::RESPONSE_SUFFIX;
-        $data = $this->redis->get($responseKey);
+        $data        = $this->redis->get($responseKey);
 
         if ($data === null) {
             return null;
@@ -65,7 +66,7 @@ class IdempotencyService
         ?int $ttl = null
     ): void {
         $responseKey = $cacheKey . self::RESPONSE_SUFFIX;
-        $ttl = $ttl ?? config('idempotency.response_ttl', 3600);
+        $ttl         = $ttl ?? config('idempotency.response_ttl', 3600);
 
         $flatHeaders = [];
         foreach ($headers as $name => $values) {
@@ -73,9 +74,9 @@ class IdempotencyService
         }
 
         $responseData = [
-            'status' => $status,
-            'body' => $body,
-            'headers' => $flatHeaders,
+            'status'     => $status,
+            'body'       => $body,
+            'headers'    => $flatHeaders,
             'request_id' => $requestId,
             'created_at' => now()->toISOString(),
         ];

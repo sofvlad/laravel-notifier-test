@@ -20,12 +20,12 @@ readonly class IdempotencyMiddleware
     {
         $key = $request->header('Idempotency-Key');
 
-        if (!$key) {
+        if (! $key) {
             throw new RuntimeException('Idempotency key is required');
         }
 
         $requestId = $request->header('X-Request-Id', uniqid());
-        $cacheKey = "idempotency:{$request->method()}:{$request->path()}:{$key}";
+        $cacheKey  = "idempotency:{$request->method()}:{$request->path()}:{$key}";
 
         $cachedResponse = $this->idempotencyService->getCachedResponse($cacheKey);
 
@@ -39,11 +39,11 @@ readonly class IdempotencyMiddleware
 
         $acquired = $this->idempotencyService->acquireLock($cacheKey, $requestId);
 
-        if (!$acquired) {
+        if (! $acquired) {
             $retryAfter = config('idempotency.lock_ttl', 30);
 
             return response()->json([
-                'error' => 'Idempotency key is being processed',
+                'error'   => 'Idempotency key is being processed',
                 'message' => "Request is already being processed. Please retry after {$retryAfter} seconds.",
             ], 409, ['Retry-After' => (string) $retryAfter]);
         }

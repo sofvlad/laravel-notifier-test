@@ -54,6 +54,7 @@ class SendNotification implements ShouldQueue
             $notification = Notification::findOrFail($this->notificationId);
         } catch (ModelNotFoundException $e) {
             $this->handleException($e);
+
             return;
         }
 
