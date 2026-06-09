@@ -8,6 +8,7 @@ use App\Enums\NotificationStatus;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class NotificationTest extends TestCase
@@ -29,6 +30,7 @@ class NotificationTest extends TestCase
     public function test_can_create_notification(): void
     {
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->withHeader('Idempotency-Key', 'test-' . Str::uuid())
             ->postJson('/api/v1/notifications', [
                 'user_id'       => $this->user->id,
                 'message'       => 'Test notification message',
@@ -57,6 +59,7 @@ class NotificationTest extends TestCase
     public function test_create_notification_validates_message_length(): void
     {
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->withHeader('Idempotency-Key', 'test-' . Str::uuid())
             ->postJson('/api/v1/notifications', [
                 'user_id'       => $this->user->id,
                 'message'       => str_repeat('a', 501),
@@ -71,6 +74,7 @@ class NotificationTest extends TestCase
     public function test_create_notification_validates_channel(): void
     {
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->withHeader('Idempotency-Key', 'test-' . Str::uuid())
             ->postJson('/api/v1/notifications', [
                 'user_id' => $this->user->id,
                 'message' => 'Test message',

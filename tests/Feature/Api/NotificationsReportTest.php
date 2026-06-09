@@ -6,6 +6,7 @@ use App\Enums\ReportStatus;
 use App\Models\NotificationsReport;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class NotificationsReportTest extends TestCase
@@ -27,6 +28,7 @@ class NotificationsReportTest extends TestCase
     public function test_it_can_request_report_generation(): void
     {
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->withHeader('Idempotency-Key', 'test-' . Str::uuid())
             ->postJson('/api/v1/reports/notifications/generate', [
                 'period_start' => '2025-01-01',
                 'period_end'   => '2025-01-31',
@@ -50,6 +52,7 @@ class NotificationsReportTest extends TestCase
     public function test_it_validates_period_dates(): void
     {
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->withHeader('Idempotency-Key', 'test-' . Str::uuid())
             ->postJson('/api/v1/reports/notifications/generate', [
                 'period_start' => 'invalid-date',
                 'period_end'   => '2025-01-31',
@@ -61,6 +64,7 @@ class NotificationsReportTest extends TestCase
     public function test_it_validates_period_does_not_exceed_90_days(): void
     {
         $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->withHeader('Idempotency-Key', 'test-' . Str::uuid())
             ->postJson('/api/v1/reports/notifications/generate', [
                 'period_start' => '2025-01-01',
                 'period_end'   => '2025-06-01',
