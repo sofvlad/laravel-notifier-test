@@ -46,7 +46,7 @@ class NotificationController extends Controller
             return response()->json($getNotificationAction->execute($uuid));
         } catch (ModelNotFoundException) {
             return response()->json([
-                'message' => 'Report not found',
+                'message' => 'Notification not found',
             ], 404);
         }
     }

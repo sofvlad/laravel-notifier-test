@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Services;
 
 use Illuminate\Contracts\Redis\Factory as RedisFactory;
+use JsonException;
 
 class IdempotencyService
 {
-    private const LOCK_SUFFIX = ':lock';
+    private const string LOCK_SUFFIX = ':lock';
 
-    private const RESPONSE_SUFFIX = ':response';
+    private const string RESPONSE_SUFFIX = ':response';
 
     public function __construct(
         private readonly RedisFactory $redis
@@ -18,14 +19,11 @@ class IdempotencyService
 
     public function acquireLock(string $cacheKey, string $requestId): bool
     {
-        $lockKey = $cacheKey . self::LOCK_SUFFIX;
-        $ttl     = config('idempotency.lock_ttl', 30);
-
         return $this->redis->set(
-            $lockKey,
+            $cacheKey . self::LOCK_SUFFIX,
             $requestId,
             'EX',
-            $ttl,
+                config('idempotency.lock_ttl', 30),
             'NX'
         ) !== null;
     }
@@ -45,6 +43,9 @@ class IdempotencyService
         $this->redis->eval($script, 1, $lockKey, $requestId);
     }
 
+    /**
+     * @throws JsonException
+     */
     public function getCachedResponse(string $cacheKey): ?array
     {
         $responseKey = $cacheKey . self::RESPONSE_SUFFIX;
@@ -57,6 +58,9 @@ class IdempotencyService
         return json_decode($data, true, 512, JSON_THROW_ON_ERROR) ?: null;
     }
 
+    /**
+     * @throws JsonException
+     */
     public function cacheResponse(
         string $cacheKey,
         string $requestId,
@@ -65,13 +69,9 @@ class IdempotencyService
         array $headers,
         ?int $ttl = null
     ): void {
-        $responseKey = $cacheKey . self::RESPONSE_SUFFIX;
-        $ttl         = $ttl ?? config('idempotency.response_ttl', 3600);
-
-        $flatHeaders = [];
-        foreach ($headers as $name => $values) {
-            $flatHeaders[$name] = is_array($values) ? implode(', ', $values) : $values;
-        }
+        $flatHeaders = array_map(function ($values) {
+            return is_array($values) ? implode(', ', $values) : $values;
+        }, $headers);
 
         $responseData = [
             'status'     => $status,
@@ -82,8 +82,8 @@ class IdempotencyService
         ];
 
         $this->redis->setex(
-            $responseKey,
-            $ttl,
+            $cacheKey . self::RESPONSE_SUFFIX,
+            $ttl ?? config('idempotency.response_ttl', 3600),
             json_encode($responseData, JSON_THROW_ON_ERROR)
         );
     }
