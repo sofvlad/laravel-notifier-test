@@ -48,11 +48,16 @@
             {
               "name": "Success 201",
               "originalRequest": {
-                "method": "GET",
+                "method": "POST",
                 "header": [
                   {
                     "key": "Content-Type",
                     "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{idempotency_key}}",
                     "type": "text"
                   }
                 ],
@@ -128,7 +133,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/notifications?page=1&per_page=15",
+              "raw": "{{base_url}}/api/v1/notifications?user_id=1&page=1&per_page=15",
               "host": [
                 "{{base_url}}"
               ],
@@ -138,6 +143,11 @@
                 "notifications"
               ],
               "query": [
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "description": "ID пользователя"
+                },
                 {
                   "key": "page",
                   "value": "1",
@@ -164,51 +174,7 @@
             },
             "description": "Получение списка уведомлений с пагинацией"
           },
-          "response": [
-            {
-              "name": "Success 200",
-              "originalRequest": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/api/v1/notifications?user_id=1&page=1&per_page=15",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "notifications"
-                  ],
-                  "query": [
-                    {
-                      "key": "user_id",
-                      "value": "1"
-                    },
-                    {
-                      "key": "page",
-                      "value": "1"
-                    },
-                    {
-                      "key": "per_page",
-                      "value": "15"
-                    }
-                  ]
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": "Text",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "cookie": [],
-              "body": ""
-            }
-          ]
+          "response": []
         }
       ],
       "description": "CRUD операции с уведомлениями"
@@ -228,6 +194,11 @@
               {
                 "key": "Accept",
                 "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{idempotency_key}}",
+                "type": "text"
               }
             ],
             "url": {
@@ -254,6 +225,11 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{idempotency_key}}",
                     "type": "text"
                   }
                 ],
@@ -370,6 +346,10 @@
     },
     {
       "key": "api_token",
+      "value": ""
+    },
+    {
+      "key": "idempotency_key",
       "value": ""
     },
     {
