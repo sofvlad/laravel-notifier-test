@@ -4,30 +4,36 @@ declare(strict_types=1);
 
 namespace App\Actions\Notifications;
 
+use App\DTO\Notifications\ListNotificationsParams;
 use App\Models\Notification;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 
 class ListNotificationsAction
 {
     /**
-     * List notifications with optional filtering
+     * List notifications with optional filtering and pagination
      */
-    public function execute(
-        int $userId,
-        ?string $status = null,
-        ?string $channel = null
-    ): Collection {
+    public function execute(ListNotificationsParams $params): array
+    {
         $query = Notification::query()
-            ->where('user_id', $userId);
+            ->where('user_id', $params->userId);
 
-        if ($status !== null) {
-            $query->where('status', $status);
+        if ($params->status !== null) {
+            $query->where('status', $params->status);
         }
 
-        if ($channel !== null) {
-            $query->where('channel', $channel);
+        if ($params->channel !== null) {
+            $query->where('channel', $params->channel);
         }
 
-        return $query->latest()->get();
+        return Arr::only($query->latest()->paginate($params->perPage)->toArray(), [
+            'data',
+            'current_page',
+            'last_page',
+            'per_page',
+            'from',
+            'to',
+            'total',
+        ]);
     }
 }

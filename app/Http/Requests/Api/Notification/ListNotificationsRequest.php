@@ -21,9 +21,11 @@ class ListNotificationsRequest extends FormRequest
         $channels = app(ChannelManager::class)->getAvailableChannels();
 
         return [
-            'user_id' => ['required', 'integer', 'exists:users,id'],
-            'status'  => ['nullable', 'string', Rule::enum(NotificationStatus::class)],
-            'channel' => ['nullable', 'string', Rule::in($channels)],
+            'user_id'  => ['required', 'integer', 'exists:users,id'],
+            'status'   => ['nullable', 'string', Rule::enum(NotificationStatus::class)],
+            'channel'  => ['nullable', 'string', Rule::in($channels)],
+            'page'     => ['nullable', 'integer', 'min:1'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ];
     }
 

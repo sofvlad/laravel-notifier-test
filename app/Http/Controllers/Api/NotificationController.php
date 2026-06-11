@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api;
 use App\Actions\Notifications\GetNotificationAction;
 use App\Actions\Notifications\ListNotificationsAction;
 use App\Actions\Notifications\StoreNotificationAction;
+use App\DTO\Notifications\ListNotificationsParams;
 use App\Enums\NotificationChannel;
 use App\Enums\NotificationPriority;
 use App\Http\Controllers\Controller;
@@ -28,13 +29,15 @@ class NotificationController extends Controller
         ListNotificationsRequest $request,
         ListNotificationsAction $listAction
     ): JsonResponse {
-        $notifications = $listAction->execute(
-            $request->integer('user_id'),
-            $request->has('status') ? $request->string('status')->toString() : null,
-            $request->has('channel') ? $request->string('channel')->toString() : null
+        return response()->json(
+            $listAction->execute(ListNotificationsParams::fromRequest([
+                'user_id'  => $request->integer('user_id'),
+                'status'   => $request->string('status')->toString(),
+                'channel'  => $request->string('channel')->toString(),
+                'page'     => $request->integer('page'),
+                'per_page' => $request->integer('per_page'),
+            ]))
         );
-
-        return response()->json($notifications);
     }
 
     /**

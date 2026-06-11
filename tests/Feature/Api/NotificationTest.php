@@ -142,7 +142,7 @@ class NotificationTest extends TestCase
             ->getJson("/api/v1/notifications?user_id={$this->user->id}");
 
         $response->assertStatus(200)
-            ->assertJsonCount(5);
+            ->assertJsonCount(5, 'data');
     }
 
     public function test_can_filter_notifications_by_status(): void
@@ -171,7 +171,7 @@ class NotificationTest extends TestCase
             ));
 
         $response->assertStatus(200)
-            ->assertJsonCount(1)
+            ->assertJsonCount(1, 'data')
             ->assertJsonFragment(['status' => NotificationStatus::SENT->value]);
     }
 
@@ -205,7 +205,7 @@ class NotificationTest extends TestCase
             ));
 
         $response->assertStatus(200)
-            ->assertJsonCount(3)
+            ->assertJsonCount(3, 'data')
             ->assertJsonFragment(['channel' => NotificationChannel::TELEGRAM->value]);
     }
 }
