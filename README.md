@@ -174,7 +174,7 @@ Authorization: Bearer {token}
     "items": [
         {
             "id": 1,
-            "uuid": "2055ebb6-b6e4-4801-88b9-8ade052b7227",
+            "uuid": "3d5fbc90-1728-4831-acd8-28a9de411e57",
             "user_id": 1,
             "message": "Ваш заказ доставлен",
             "status": "pending",
@@ -183,8 +183,10 @@ Authorization: Bearer {token}
             "next_attempt_at": null,
             "channel": "email",
             "priority": "critical",
-            "error_message": nul
-            "created_at": "2024-01-15T10:30:00Z"
+            "error_message": null,
+            "sent_at": null,
+            "created_at": "2026-06-11T09:12:14.000000Z",
+            "updated_at": "2026-06-11T09:12:14.000000Z"
         }
     ]
 }
@@ -211,8 +213,9 @@ Authorization: Bearer {token}
     "channel": "email",
     "priority": "critical",
     "error_message": null,
-    "sent_at": "2024-01-15T10:30:05Z",
-    "created_at": "2024-01-15T10:30:00Z"
+    "sent_at": "2026-06-11T09:12:14.000000Z",
+    "created_at": "2026-06-11T09:12:14.000000Z",
+    "updated_at": "2026-06-11T09:12:14.000000Z"
 }
 ```
 
