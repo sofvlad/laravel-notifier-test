@@ -55,7 +55,7 @@ readonly class NotificationService
 
         SendNotification::dispatch($notification)->onQueue(match ($priority) {
             NotificationPriority::CRITICAL => 'notifications_critical',
-            default => 'notifications',
+            default                        => 'notifications',
         });
 
         $this->logger->info(

@@ -23,7 +23,7 @@ class IdempotencyService
             $cacheKey . self::LOCK_SUFFIX,
             $requestId,
             'EX',
-                config('idempotency.lock_ttl', 30),
+            config('idempotency.lock_ttl', 30),
             'NX'
         ) !== null;
     }

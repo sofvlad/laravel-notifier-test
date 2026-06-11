@@ -83,9 +83,9 @@ class SendNotification implements ShouldQueue
     public function handle(NotificationService $notificationService): void
     {
         $notification = $this->notification;
-        $attempt = $this->attempts();
-        $maxAttempts = $this->tries();
-        $lastAttempt = now();
+        $attempt      = $this->attempts();
+        $maxAttempts  = $this->tries();
+        $lastAttempt  = now();
 
         try {
             $updated = false;
@@ -171,10 +171,10 @@ class SendNotification implements ShouldQueue
             ])
         );
 
-        $lastAttempt = now();
+        $lastAttempt   = now();
         $isMaxAttempts = $attempt >= $maxAttempts;
 
-        if ($isMaxAttempts || !$e instanceof TemporaryNotificationException) {
+        if ($isMaxAttempts || ! $e instanceof TemporaryNotificationException) {
             $notification->update([
                 'status'          => NotificationStatus::FAILED,
                 'attempt'         => $attempt,
