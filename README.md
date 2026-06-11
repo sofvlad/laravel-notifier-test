@@ -173,12 +173,17 @@ Authorization: Bearer {token}
 {
     "items": [
         {
-            "uuid": "550e8400-e29b-41d4-a716-446655440000",
+            "id": 1,
+            "uuid": "2055ebb6-b6e4-4801-88b9-8ade052b7227",
             "user_id": 1,
             "message": "Ваш заказ доставлен",
+            "status": "pending",
+            "attempt": 0,
+            "last_attempt_at": null,
+            "next_attempt_at": null,
             "channel": "email",
             "priority": "critical",
-            "status": "pending",
+            "error_message": nul
             "created_at": "2024-01-15T10:30:00Z"
         }
     ]
@@ -195,12 +200,16 @@ Authorization: Bearer {token}
 **Ответ:**
 ```json
 {
-    "uuid": "550e8400-e29b-41d4-a716-446655440000",
+    "id": 1,
+    "uuid": "3d5fbc90-1728-4831-acd8-28a9de411e57",
     "user_id": 1,
     "message": "Ваш заказ доставлен",
+    "status": "sent",
+    "attempt": 1,
+    "last_attempt_at": "2026-06-11T09:12:14.000000Z",
+    "next_attempt_at": null,
     "channel": "email",
     "priority": "critical",
-    "status": "sent",
     "error_message": null,
     "sent_at": "2024-01-15T10:30:05Z",
     "created_at": "2024-01-15T10:30:00Z"
