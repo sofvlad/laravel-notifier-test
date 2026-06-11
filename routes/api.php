@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\NotificationsReportController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::prefix('v1')->group(function () {
         Route::prefix('notifications')->group(function () {
             Route::get('/', [NotificationController::class, 'index']);
